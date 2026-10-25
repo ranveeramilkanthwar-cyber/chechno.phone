@@ -1,0 +1,17 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local Database
+privaindia.db
+*.sqlite3
+
+# Netlify & Build Artifacts
+.netlify/
+node_modules/
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+*.log

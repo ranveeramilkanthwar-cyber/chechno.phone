@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: privaindia-postgres
+    environment:
+      POSTGRES_DB: privaindia
+      POSTGRES_USER: priva_admin
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-sovereign_dpdp_2026}
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U priva_admin -d privaindia"]
+      interval: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: privaindia-redis
+    ports: ["6379:6379"]
+
+  api-gateway:
+    build: ./services/api-gateway
+    container_name: privaindia-api
+    environment:
+      DATABASE_URL: postgresql+asyncpg://priva_admin:${DB_PASSWORD:-sovereign_dpdp_2026}@postgres:5432/privaindia
+      REDIS_URL: redis://redis:6379/0
+      KMS_BLIND_INDEX_PEPPER: ${KMS_PEPPER:-in-dpdp-sovereign-pepper-2026}
+    ports: ["8000:8000"]
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_started }
+
+  playwright-worker:
+    build: ./services/worker-fleet
+    container_name: privaindia-worker
+    command: celery -A workers.orchestrator worker --loglevel=info --concurrency=8
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      SELF_HEALING_ENABLED: "true"
+    depends_on: [redis, api-gateway]
+
+  autonomous-healer:
+    build: ./services/autonomous-healer
+    container_name: privaindia-healer
+    command: python3 /app/scripts/autonomous_healer.py --watch
+    depends_on: [playwright-worker]

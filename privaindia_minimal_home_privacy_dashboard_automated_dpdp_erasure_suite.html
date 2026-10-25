@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PrivaIndia — Minimal Home Privacy Dashboard &amp; Automated DPDP Erasure Suite</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            obsidian: '#090A0F',
+            alabaster: '#F8FAFC',
+            emerald: '#10B981'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* Strict 3-Color Aesthetic System:
+       1. Obsidian (#090A0F) - Canvas, cards, structural depth
+       2. Alabaster (#F8FAFC) - Typography, borders, geometric contrast
+       3. Sovereign Emerald (#10B981) - Active states, verified removal, self-healing pulse
+    */
+    body {
+      background-color: #090A0F;
+      color: #F8FAFC;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      overflow-x: hidden;
+    }
+    .hairline-border {
+      border: 1px solid rgba(248, 250, 252, 0.14);
+    }
+    .hairline-emerald {
+      border: 1px solid rgba(16, 185, 129, 0.45);
+    }
+    .surface-card {
+      background-color: rgba(248, 250, 252, 0.03);
+      border: 1px solid rgba(248, 250, 252, 0.12);
+    }
+    .surface-card-active {
+      background-color: rgba(16, 185, 129, 0.07);
+      border: 1px solid rgba(16, 185, 129, 0.55);
+    }
+    .radar-pulse {
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+      animation: pulseEmerald 2s infinite;
+    }
+    @keyframes pulseEmerald {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55); }
+      70% { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #090A0F; }
+    ::-webkit-scrollbar-thumb { background: rgba(248, 250, 252, 0.2); border-radius: 3px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-emerald selection:text-obsidian">
+
+  <!-- SLIDE-OUT MINIMAL NAVIGATION MENU DRAWER -->
+  <div id="menu-backdrop" class="fixed inset-0 z-50 bg-obsidian/80 backdrop-blur-sm hidden">
+    <aside class="w-80 max-w-[85vw] h-full bg-obsidian border-r border-alabaster/15 p-6 flex flex-col justify-between">
+      <div class="space-y-6">
+        <!-- Menu Header -->
+        <div class="flex items-center justify-between border-b border-alabaster/10 pb-4">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-emerald flex items-center justify-center text-obsidian font-black text-base">P</div>
+            <div>
+              <div class="text-sm font-bold text-alabaster">PrivaIndia Menu</div>
+              <div class="text-[10px] font-mono text-emerald">3-STEP DPDP FLOW</div>
+            </div>
+          </div>
+          <button id="btn-close-menu" class="px-2.5 py-1 rounded-lg hairline-border text-xs font-mono text-alabaster/80 hover:border-emerald">
+            ✕ Close
+          </button>
+        </div>
+
+        <!-- Step-by-Step Guided Menu Items -->
+        <div class="space-y-2">
+          <div class="text-[10px] font-mono uppercase tracking-wider text-alabaster/50 px-2">Primary Guided Flow</div>
+          <button data-drawer-tab="home" class="drawer-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between bg-emerald text-obsidian">
+            <span>⌂ Minimal Home Dashboard</span>
+            <span class="font-mono text-[10px]">START</span>
+          </button>
+          <button data-drawer-tab="intake" class="drawer-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium flex items-center justify-between hairline-border text-alabaster/85 hover:border-emerald">
+            <span>1. Identity &amp; +91 Intake</span>
+            <span class="font-mono text-[10px] text-emerald">STEP 1</span>
+          </button>
+          <button data-drawer-tab="scanner" class="drawer-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium flex items-center justify-between hairline-border text-alabaster/85 hover:border-emerald">
+            <span>2. Check Apps &amp; Websites (17+)</span>
+            <span class="font-mono text-[10px] text-emerald">STEP 2</span>
+          </button>
+          <button data-drawer-tab="consent" class="drawer-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium flex items-center justify-between hairline-border text-alabaster/85 hover:border-emerald">
+            <span>3. Ask &amp; Authorise Removal</span>
+            <span class="font-mono text-[10px] text-emerald">STEP 3</span>
+          </button>
+          <button data-drawer-tab="dashboard" class="drawer-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium flex items-center justify-between hairline-border text-alabaster/85 hover:border-emerald">
+            <span>4. Erasure Status Ledger</span>
+            <span class="font-mono text-[10px] text-alabaster/50">TRACK</span>
+          </button>
+        </div>
+
+        <div class="space-y-2 pt-2 border-t border-alabaster/10">
+          <div class="text-[10px] font-mono uppercase tracking-wider text-alabaster/50 px-2">System &amp; Billing</div>
+          <button data-drawer-tab="healer" class="drawer-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium flex items-center justify-between hairline-border text-alabaster/85 hover:border-emerald">
+            <span>5. Autonomous Self-Healing Loop</span>
+            <span class="font-mono text-[10px] text-emerald">0 ERR</span>
+          </button>
+          <button data-drawer-tab="pricing" class="drawer-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium flex items-center justify-between hairline-border text-alabaster/85 hover:border-emerald">
+            <span>6. Recurring Protection Plans</span>
+            <span class="font-mono text-[10px] text-alabaster/50">UPI</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Menu Footer -->
+      <div class="surface-card rounded-xl p-3.5 space-y-1 text-[11px] font-mono">
+        <div class="text-emerald font-bold">DPDP ACT 2023 COMPLIANT</div>
+        <div class="text-alabaster/60">Strict 3-Color UI: #090A0F • #F8FAFC • #10B981</div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- TOP MINIMAL NAVIGATION BAR (WITH MENU, BACK BUTTON & HOME BUTTON) -->
+  <header class="sticky top-0 z-40 bg-obsidian/95 backdrop-blur-md border-b border-alabaster/15 px-4 lg:px-8 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <!-- Left: Menu Button, Contextual Back Button, Home Button & Brand -->
+      <div class="flex items-center gap-2">
+        <button
+          id="btn-open-menu"
+          aria-label="Open Navigation Menu"
+          class="px-3 py-2 rounded-xl hairline-border text-xs font-mono text-alabaster hover:border-emerald transition-all flex items-center gap-1.5"
+        >
+          <span>☰</span>
+          <span class="hidden sm:inline">Menu</span>
+        </button>
+
+        <button
+          id="btn-global-back"
+          aria-label="Go Back"
+          class="px-3 py-2 rounded-xl hairline-border text-xs font-mono text-alabaster/80 hover:text-alabaster hover:border-emerald transition-all flex items-center gap-1"
+        >
+          <span>←</span>
+          <span>Back</span>
+        </button>
+
+        <button
+          id="btn-global-home"
+          data-tab="home"
+          class="tab-btn px-3 py-2 rounded-xl text-xs font-semibold transition-all bg-emerald text-obsidian flex items-center gap-1"
+        >
+          <span>⌂</span>
+          <span>Home</span>
+        </button>
+
+        <div class="hidden md:flex items-center gap-2 pl-2 border-l border-alabaster/15">
+          <span class="font-bold tracking-tight text-sm text-alabaster">PrivaIndia</span>
+          <span id="breadcrumb-current" class="text-[11px] font-mono text-emerald">/ Minimal Home Dashboard</span>
+        </div>
+      </div>
+
+      <!-- Center: Compact Step Pills -->
+      <nav class="flex items-center gap-1 overflow-x-auto py-1" aria-label="Main Modules">
+        <button id="nav-intake" data-tab="intake" class="tab-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all text-alabaster/75 hover:text-alabaster hairline-border">
+          1. Identity Intake
+        </button>
+        <button id="nav-scanner" data-tab="scanner" class="tab-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all text-alabaster/75 hover:text-alabaster hairline-border">
+          2. Exposure Scanner (17+)
+        </button>
+        <button id="nav-consent" data-tab="consent" class="tab-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all text-alabaster/75 hover:text-alabaster hairline-border">
+          3. Consent &amp; Erasure
+        </button>
+        <button id="nav-dashboard" data-tab="dashboard" class="tab-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all text-alabaster/75 hover:text-alabaster hairline-border">
+          4. Privacy Dashboard
+        </button>
+        <button id="nav-healer" data-tab="healer" class="tab-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all text-alabaster/75 hover:text-alabaster hairline-border">
+          5. Self-Healing Loop
+        </button>
+        <button id="nav-pricing" data-tab="pricing" class="tab-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all text-alabaster/75 hover:text-alabaster hairline-border">
+          6. SaaS Plans
+        </button>
+      </nav>
+
+      <!-- Right: Sync Status & Phone Companion Toggle -->
+      <div class="flex items-center gap-2">
+        <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald/10 border border-emerald/30 text-[11px] font-mono text-emerald">
+          <span class="w-2 h-2 rounded-full bg-emerald animate-ping"></span>
+          <span id="ws-sync-badge">SYNCED</span>
+        </div>
+        <button id="btn-toggle-mobile" class="px-3 py-1.5 rounded-lg text-xs font-mono hairline-border text-alabaster hover:border-emerald transition-all">
+          Phone Companion: ON
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE: CONNECTED WEB + MOBILE SPLIT OR FULL VIEW -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+    <!-- LEFT / PRIMARY WEB APPLICATION VIEWPORT (8 cols when mobile companion is visible) -->
+    <div id="web-viewport" class="lg:col-span-8 space-y-6">
+
+      <!-- Minimal 3-Step Workflow Progress Bar (Check Apps -> Ask User -> Remove) -->
+      <div class="surface-card rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <span class="text-xs font-mono uppercase text-emerald font-bold">How It Works:</span>
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            <span class="px-2.5 py-1 rounded-lg bg-alabaster/5 hairline-border font-mono">① Check Websites &amp; Apps Using Your Data</span>
+            <span class="text-emerald font-mono">→</span>
+            <span class="px-2.5 py-1 rounded-lg bg-alabaster/5 hairline-border font-mono">② Review &amp; Approve Removal</span>
+            <span class="text-emerald font-mono">→</span>
+            <span class="px-2.5 py-1 rounded-lg bg-emerald/15 border border-emerald/40 text-emerald font-mono">③ Automated Erasure</span>
+          </div>
+        </div>
+        <span class="text-xs font-mono text-alabaster/70" id="active-user-pill">+91 98204 71920 • Ranveer S.</span>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- MINIMAL HOME PAGE DASHBOARD (DEFAULT LANDING VIEW)                -->
+      <!-- ================================================================= -->
+      <section id="panel-home" class="tab-panel space-y-5">
+        <!-- Hero Minimal Check-First Card -->
+        <div class="surface-card rounded-2xl p-6 lg:p-8 space-y-6">
+          <div class="flex flex-wrap items-start justify-between gap-4">
+            <div class="space-y-1.5 max-w-xl">
+              <span class="text-xs font-mono uppercase tracking-widest text-emerald">Minimal Home Dashboard • Step 1 of 3</span>
+              <h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-alabaster">
+                First, Check Which Websites &amp; Apps Are Using Your Data
+              </h1>
+              <p class="text-sm text-alabaster/70">
+                Enter your <span class="font-mono text-alabaster">+91</span> number to see every loan app, caller-ID database, and public website exposing your personal details—then choose which ones you want us to remove.
+              </p>
+            </div>
+            <div class="surface-card-active rounded-2xl px-4 py-3 text-center">
+              <div class="text-[10px] font-mono uppercase text-emerald">Current Exposure</div>
+              <div id="home-exposed-badge" class="text-2xl font-black font-mono text-alabaster mt-0.5">14 Apps/Sites</div>
+              <div class="text-[10px] font-mono text-alabaster/60">Out of 17 Checked</div>
+            </div>
+          </div>
+
+          <!-- Quick 1-Line Check Bar -->
+          <div class="p-4 rounded-2xl bg-alabaster/[0.02] hairline-border flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <div class="flex items-center flex-1 rounded-xl hairline-border px-3.5 py-2.5 bg-obsidian focus-within:border-emerald">
+              <span class="font-mono text-sm text-emerald pr-3 border-r border-alabaster/15">+91</span>
+              <input
+                id="home-quick-phone"
+                type="tel"
+                maxlength="10"
+                value="9820471920"
+                placeholder="Enter 10-digit mobile number"
+                class="w-full bg-transparent px-3 text-sm font-mono text-alabaster focus:outline-none"
+              />
+            </div>
+            <button
+              id="btn-home-check-apps"
+              class="px-5 py-3 rounded-xl bg-emerald text-obsidian font-bold text-xs sm:text-sm tracking-tight hover:opacity-90 transition-all whitespace-nowrap"
+            >
+              1. Check Websites &amp; Apps Using My Data →
+            </button>
+          </div>
+
+          <!-- Instant Preview of Websites & Apps Currently Holding Data (With Ask-to-Remove Prompt) -->
+          <div class="space-y-3 pt-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h2 class="text-sm font-bold uppercase font-mono tracking-wider text-alabaster">
+                  Websites &amp; Apps Currently Using Your Data (+91 98204 71920)
+                </h2>
+                <p class="text-xs text-alabaster/60">
+                  Review the detected apps and websites below. Toggle the ones you want removed, then click <strong class="text-emerald">Ask to Remove Selected Data</strong>.
+                </p>
+              </div>
+              <button
+                id="btn-home-see-all-17"
+                class="text-xs font-mono text-emerald hover:underline"
+              >
+                View All 17 Checked Sources →
+              </button>
+            </div>
+
+            <!-- Minimal Clean List of Detected Websites/Apps on Home Screen -->
+            <div id="home-detected-apps-list" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <!-- Populated by JS -->
+            </div>
+
+            <!-- Ask User Confirmation Bar on Home Dashboard -->
+            <div class="surface-card-active rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 mt-4">
+              <div class="space-y-0.5">
+                <div class="text-xs font-mono font-bold text-emerald uppercase">
+                  Step 2: User Confirmation Required Before Erasure
+                </div>
+                <p id="home-ask-prompt-text" class="text-xs text-alabaster/90">
+                  We found 12 removable apps/websites using your phone number &amp; name. Would you like PrivaIndia to remove your data from these selected sources?
+                </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button
+                  id="btn-home-review-granular"
+                  class="px-3.5 py-2.5 rounded-xl hairline-border text-xs font-mono text-alabaster hover:border-emerald transition-all"
+                >
+                  Customize List
+                </button>
+                <button
+                  id="btn-home-confirm-remove"
+                  class="px-5 py-2.5 rounded-xl bg-emerald text-obsidian font-bold text-xs tracking-tight hover:opacity-90 transition-all"
+                >
+                  Yes, Remove My Data Now →
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Minimal 3-Card Summary Row -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            <button data-quick-nav="scanner" class="quick-nav-card surface-card rounded-xl p-4 text-left hover:border-emerald transition-all space-y-1">
+              <div class="text-[10px] font-mono uppercase text-emerald">Step 01 • Discovery</div>
+              <div class="text-sm font-bold text-alabaster">17+ Apps &amp; Sites Checked</div>
+              <div class="text-xs text-alabaster/60">Loan apps, Justdial, Truecaller, 99acres &amp; directories</div>
+            </button>
+            <button data-quick-nav="consent" class="quick-nav-card surface-card rounded-xl p-4 text-left hover:border-emerald transition-all space-y-1">
+              <div class="text-[10px] font-mono uppercase text-emerald">Step 02 • Your Choice</div>
+              <div class="text-sm font-bold text-alabaster" id="home-card-selected-count">12 Selected for Removal</div>
+              <div class="text-xs text-alabaster/60">You control exactly which websites delete your info</div>
+            </button>
+            <button data-quick-nav="dashboard" class="quick-nav-card surface-card rounded-xl p-4 text-left hover:border-emerald transition-all space-y-1">
+              <div class="text-[10px] font-mono uppercase text-emerald">Step 03 • Verified Status</div>
+              <div class="text-sm font-bold text-alabaster" id="home-card-removed-count">9 Already Removed</div>
+              <div class="text-xs text-alabaster/60">Live DPDP Section 12(3) erasure receipts</div>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- MODULE A: ONBOARDING & IDENTITY INTAKE                            -->
+      <!-- ================================================================= -->
+      <section id="panel-intake" class="tab-panel hidden space-y-5">
+        <div class="surface-card rounded-2xl p-6 lg:p-8 space-y-6">
+          <div class="flex flex-wrap items-start justify-between gap-4 border-b border-alabaster/10 pb-5">
+            <div>
+              <span class="text-xs font-mono uppercase tracking-widest text-emerald">Module A • DPDP Act Section 6 Intake</span>
+              <h2 class="text-2xl font-bold tracking-tight mt-1">Protect Your Indian Identity &amp; Phone Number</h2>
+              <p class="text-sm text-alabaster/70 mt-1">
+                Scan 17+ Indian lead-generation brokers, DSA loan aggregators, caller-ID databases, and public directories.
+              </p>
+            </div>
+            <button data-back-home="true" class="back-home-btn px-3 py-1.5 rounded-lg hairline-border text-xs font-mono hover:border-emerald">
+              ← Back to Home
+            </button>
+          </div>
+
+          <form id="intake-form" class="space-y-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Phone Number Input with +91 -->
+              <div class="space-y-1.5">
+                <label for="input-phone" class="block text-xs font-mono uppercase text-alabaster/80">
+                  Indian Mobile Number (Required)
+                </label>
+                <div class="flex rounded-xl overflow-hidden hairline-border focus-within:border-emerald transition-colors">
+                  <span class="px-3.5 py-3 bg-alabaster/5 text-alabaster font-mono text-sm border-r border-alabaster/15 flex items-center">
+                    +91
+                  </span>
+                  <input
+                    id="input-phone"
+                    type="tel"
+                    maxlength="10"
+                    value="9820471920"
+                    placeholder="9820471920"
+                    class="w-full bg-transparent px-4 py-3 text-sm font-mono text-alabaster focus:outline-none"
+                    required
+                  />
+                </div>
+                <p id="phone-validation-msg" class="text-[11px] font-mono text-emerald">
+                  ✓ Valid TRAI 10-digit Indian mobile series detected
+                </p>
+              </div>
+
+              <!-- Full Name Input -->
+              <div class="space-y-1.5">
+                <label for="input-name" class="block text-xs font-mono uppercase text-alabaster/80">
+                  Full Legal Name (For DPDP Notices)
+                </label>
+                <input
+                  id="input-name"
+                  type="text"
+                  value="Ranveer Sharma"
+                  placeholder="e.g. Ranveer Sharma"
+                  class="w-full rounded-xl hairline-border bg-transparent px-4 py-3 text-sm text-alabaster focus:outline-none focus:border-emerald transition-colors"
+                />
+                <p class="text-[11px] text-alabaster/50">Used to match public directory records &amp; sign erasure requests.</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Email Address Input -->
+              <div class="space-y-1.5">
+                <label for="input-email" class="block text-xs font-mono uppercase text-alabaster/80">
+                  Email Address (Optional)
+                </label>
+                <input
+                  id="input-email"
+                  type="email"
+                  value="ranveer.privacy@proton.me"
+                  placeholder="name@domain.in"
+                  class="w-full rounded-xl hairline-border bg-transparent px-4 py-3 text-sm font-mono text-alabaster focus:outline-none focus:border-emerald transition-colors"
+                />
+              </div>
+
+              <!-- City / Telecom Circle -->
+              <div class="space-y-1.5">
+                <label for="input-circle" class="block text-xs font-mono uppercase text-alabaster/80">
+                  Telecom Circle / Jurisdiction
+                </label>
+                <select
+                  id="input-circle"
+                  class="w-full rounded-xl hairline-border bg-obsidian px-4 py-3 text-sm text-alabaster focus:outline-none focus:border-emerald transition-colors"
+                >
+                  <option value="Mumbai / Maharashtra (MH)">Mumbai / Maharashtra (MH)</option>
+                  <option value="Delhi NCR (DL)">Delhi NCR (DL)</option>
+                  <option value="Karnataka / Bengaluru (KA)">Karnataka / Bengaluru (KA)</option>
+                  <option value="Telangana / Hyderabad (TG)">Telangana / Hyderabad (TG)</option>
+                  <option value="Tamil Nadu / Chennai (TN)">Tamil Nadu / Chennai (TN)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Explicit DPDP Consent Artefact Box -->
+            <div class="surface-card-active rounded-xl p-4 space-y-3">
+              <label class="flex items-start gap-3 cursor-pointer">
+                <input
+                  id="input-consent"
+                  type="checkbox"
+                  checked
+                  class="mt-1 w-4 h-4 accent-emerald rounded cursor-pointer"
+                />
+                <span class="text-xs leading-relaxed text-alabaster/90">
+                  <strong class="text-alabaster">I consent to searches and automated/manual removal requests made on my behalf.</strong>
+                  Under Section 6 &amp; Section 12 of India’s Digital Personal Data Protection (DPDP) Act, 2023, I authorise PrivaIndia as my Consent Manager to query targeted directories and dispatch legally binding erasure notices.
+                </span>
+              </label>
+              <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-alabaster/10 text-[11px] font-mono text-alabaster/70">
+                <span>ARTEFACT ID: <strong id="consent-token-preview" class="text-emerald">DPDP-IN-2026-88419A</strong></span>
+                <span>SIGNATURE: ED25519 VERIFIED</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
+              <button
+                type="submit"
+                id="btn-start-scan"
+                class="px-6 py-3.5 rounded-xl bg-emerald text-obsidian font-bold text-sm tracking-tight hover:opacity-90 transition-all flex items-center gap-2"
+              >
+                <span>Scan 17+ Indian Directories &amp; Brokers Now</span>
+                <span class="font-mono text-xs">→</span>
+              </button>
+              <button
+                type="button"
+                id="btn-demo-populate"
+                class="px-4 py-3 rounded-xl hairline-border text-xs font-mono text-alabaster/80 hover:text-alabaster hover:border-emerald transition-all"
+              >
+                Load Sample Mumbai Leak Profile
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- MODULE B: AUTOMATED EXPOSURE SCANNER (CHECK WEBSITES & APPS)      -->
+      <!-- ================================================================= -->
+      <section id="panel-scanner" class="tab-panel hidden space-y-5">
+        <div class="surface-card rounded-2xl p-6 lg:p-8 space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-xs font-mono uppercase tracking-widest text-emerald">Step 1 Result • Websites &amp; Apps Using Your Data</span>
+              <h2 class="text-2xl font-bold tracking-tight mt-1" id="scan-headline">
+                Scanning supported public listings (17/17 completed)
+              </h2>
+            </div>
+            <div class="flex items-center gap-2">
+              <button data-back-home="true" class="back-home-btn px-3 py-2 rounded-lg hairline-border text-xs font-mono hover:border-emerald">
+                ← Home
+              </button>
+              <button
+                id="btn-rerun-scan"
+                class="px-3.5 py-2 rounded-lg hairline-border text-xs font-mono hover:border-emerald transition-all"
+              >
+                Re-Run Live Scan (01→17)
+              </button>
+              <button
+                id="btn-jump-consent"
+                class="px-4 py-2 rounded-lg bg-emerald text-obsidian font-semibold text-xs hover:opacity-90 transition-all"
+              >
+                Review &amp; Authorise Removal →
+              </button>
+            </div>
+          </div>
+
+          <!-- Progress Counter Bar -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span id="scan-step-label" class="text-emerald">NODE WORKER: ALL 17 INDIAN BROKER ADAPTERS QUERIED</span>
+              <span id="scan-counter-badge" class="text-alabaster font-bold">17 / 17 (100%)</span>
+            </div>
+            <div class="w-full h-2.5 bg-alabaster/10 rounded-full overflow-hidden">
+              <div id="scan-progress-bar" class="h-full bg-emerald transition-all duration-300" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <!-- Category Filter Pills -->
+          <div class="flex flex-wrap items-center gap-2 pt-1">
+            <button data-cat="ALL" class="cat-filter-btn px-3 py-1 rounded-lg text-xs font-mono bg-emerald text-obsidian font-semibold">
+              All Sources (17)
+            </button>
+            <button data-cat="DSA Loan/Credit" class="cat-filter-btn px-3 py-1 rounded-lg text-xs font-mono hairline-border text-alabaster/75">
+              DSA Loan/Credit (5)
+            </button>
+            <button data-cat="B2B & Local Directory" class="cat-filter-btn px-3 py-1 rounded-lg text-xs font-mono hairline-border text-alabaster/75">
+              B2B &amp; Directories (4)
+            </button>
+            <button data-cat="Caller-ID / People" class="cat-filter-btn px-3 py-1 rounded-lg text-xs font-mono hairline-border text-alabaster/75">
+              Caller-ID &amp; People (3)
+            </button>
+            <button data-cat="Classifieds & Property" class="cat-filter-btn px-3 py-1 rounded-lg text-xs font-mono hairline-border text-alabaster/75">
+              Classifieds &amp; Property (3)
+            </button>
+            <button data-cat="Public Gazette / Govt" class="cat-filter-btn px-3 py-1 rounded-lg text-xs font-mono hairline-border text-alabaster/75">
+              Public Records (2)
+            </button>
+          </div>
+
+          <!-- Live 17-Broker Grid -->
+          <div id="scanner-results-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <!-- Dynamically populated by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- MODULE C: GRANULAR CONSENT & ASK USER TO REMOVE                   -->
+      <!-- ================================================================= -->
+      <section id="panel-consent" class="tab-panel hidden space-y-5">
+        <div class="surface-card rounded-2xl p-6 lg:p-8 space-y-6">
+          <div class="flex flex-wrap items-start justify-between gap-4 border-b border-alabaster/10 pb-5">
+            <div>
+              <span class="text-xs font-mono uppercase tracking-widest text-emerald">Step 2 • Approve Which Websites &amp; Apps Must Remove Your Data</span>
+              <h2 class="text-2xl font-bold tracking-tight mt-1">Select Exposed Listings &amp; Authorise Removal</h2>
+              <p class="text-sm text-alabaster/70 mt-1">
+                Check or uncheck any website/app below. We only dispatch erasure requests for sources you explicitly approve.
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button data-back-home="true" class="back-home-btn px-3 py-1.5 rounded-lg hairline-border text-xs font-mono hover:border-emerald">
+                ← Home
+              </button>
+              <button id="btn-select-all-removable" class="px-3 py-1.5 rounded-lg hairline-border text-xs font-mono hover:border-emerald">
+                Select All Removable
+              </button>
+              <button id="btn-deselect-all" class="px-3 py-1.5 rounded-lg hairline-border text-xs font-mono hover:border-emerald">
+                Clear Selection
+              </button>
+            </div>
+          </div>
+
+          <!-- Summary Bar -->
+          <div class="grid grid-cols-3 gap-3 text-center">
+            <div class="surface-card rounded-xl p-3">
+              <div class="text-xs font-mono text-alabaster/60">EXPOSED SOURCES</div>
+              <div id="consent-stat-exposed" class="text-xl font-bold font-mono text-alabaster mt-0.5">14</div>
+            </div>
+            <div class="surface-card-active rounded-xl p-3">
+              <div class="text-xs font-mono text-emerald">SELECTED FOR REMOVAL</div>
+              <div id="consent-stat-selected" class="text-xl font-bold font-mono text-emerald mt-0.5">12</div>
+            </div>
+            <div class="surface-card rounded-xl p-3">
+              <div class="text-xs font-mono text-alabaster/60">STATUTORY EXEMPT</div>
+              <div id="consent-stat-exempt" class="text-xl font-bold font-mono text-alabaster/70 mt-0.5">2</div>
+            </div>
+          </div>
+
+          <!-- Granular Listing Selection Table/Cards -->
+          <div id="consent-list-container" class="space-y-2.5 max-h-[420px] overflow-y-auto pr-1">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Primary Authorise CTA Bar -->
+          <div class="surface-card-active rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
+            <div class="space-y-0.5">
+              <div class="text-xs font-mono text-emerald uppercase">Ready for Dispatch via Celery + Playwright Queue</div>
+              <p class="text-xs text-alabaster/80">
+                Generates digitally signed DPDP Section 12(3) erasure petitions &amp; executes automated headless opt-out workflows.
+              </p>
+            </div>
+            <button
+              id="btn-authorise-removal"
+              class="px-6 py-3.5 rounded-xl bg-emerald text-obsidian font-bold text-sm tracking-tight hover:opacity-90 transition-all"
+            >
+              Authorise Removal (Dispatch Selected)
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- MODULE D: CENTRALIZED PRIVACY DASHBOARD                           -->
+      <!-- ================================================================= -->
+      <section id="panel-dashboard" class="tab-panel hidden space-y-5">
+        <div class="surface-card rounded-2xl p-6 lg:p-8 space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-xs font-mono uppercase tracking-widest text-emerald">Step 3 • Real-Time Telemetry &amp; Audit Ledger</span>
+              <h2 class="text-2xl font-bold tracking-tight mt-1">Centralized Privacy &amp; Erasure Dashboard</h2>
+            </div>
+            <div class="flex items-center gap-2">
+              <button data-back-home="true" class="back-home-btn px-3 py-2 rounded-lg hairline-border text-xs font-mono hover:border-emerald">
+                ← Home
+              </button>
+              <button
+                id="btn-simulate-tick"
+                class="px-3.5 py-2 rounded-lg bg-emerald text-obsidian font-semibold text-xs hover:opacity-90 transition-all"
+              >
+                Advance Worker Queue (+1 Step)
+              </button>
+              <button
+                id="btn-export-audit"
+                class="px-3.5 py-2 rounded-lg hairline-border text-xs font-mono hover:border-emerald transition-all"
+              >
+                Copy DPDP Audit JSON
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 Real-Time Status Cards -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="surface-card rounded-xl p-4">
+              <span class="text-[11px] font-mono uppercase text-alabaster/60">Total Tracked</span>
+              <div id="dash-metric-total" class="text-3xl font-bold font-mono text-alabaster mt-1">14</div>
+              <span class="text-[11px] text-alabaster/50">Active Indian listings</span>
+            </div>
+            <div class="surface-card-active rounded-xl p-4">
+              <span class="text-[11px] font-mono uppercase text-emerald">Successfully Removed</span>
+              <div id="dash-metric-removed" class="text-3xl font-bold font-mono text-emerald mt-1">9</div>
+              <span class="text-[11px] text-emerald/80">Verified HTTP 200 / Receipt</span>
+            </div>
+            <div class="surface-card rounded-xl p-4">
+              <span class="text-[11px] font-mono uppercase text-alabaster/80">Pending Processing</span>
+              <div id="dash-metric-pending" class="text-3xl font-bold font-mono text-alabaster mt-1">3</div>
+              <span class="text-[11px] text-alabaster/50">In 72h DPO SLA window</span>
+            </div>
+            <div class="surface-card rounded-xl p-4">
+              <span class="text-[11px] font-mono uppercase text-alabaster/60">Not Removable</span>
+              <div id="dash-metric-exempt" class="text-3xl font-bold font-mono text-alabaster/70 mt-1">2</div>
+              <span class="text-[11px] text-alabaster/50">Statutory / Govt Gazette</span>
+            </div>
+          </div>
+
+          <!-- Request History Log -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold uppercase font-mono tracking-wider text-alabaster/90">
+                Individual Removal Request Ledger
+              </h3>
+              <span class="text-xs font-mono text-emerald" id="ledger-sync-timestamp">Synced with Mobile Companion</span>
+            </div>
+            <div class="overflow-x-auto rounded-xl hairline-border">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="border-b border-alabaster/15 bg-alabaster/5 font-mono text-[11px] uppercase text-alabaster/70">
+                    <th class="py-3 px-3.5">Broker / Directory</th>
+                    <th class="py-3 px-3.5">Category</th>
+                    <th class="py-3 px-3.5">Channel</th>
+                    <th class="py-3 px-3.5">Status</th>
+                    <th class="py-3 px-3.5 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboard-ledger-body" class="divide-y divide-alabaster/10 font-mono">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- MODULE E (SELF-HEALING): AUTONOMOUS DEBUGGING & REPAIR ENGINE     -->
+      <!-- ================================================================= -->
+      <section id="panel-healer" class="tab-panel hidden space-y-5">
+        <div class="surface-card rounded-2xl p-6 lg:p-8 space-y-6">
+          <div class="flex flex-wrap items-start justify-between gap-4 border-b border-alabaster/10 pb-5">
+            <div>
+              <span class="text-xs font-mono uppercase tracking-widest text-emerald">Autonomous Self-Healing &amp; Recursive Debugging Loop</span>
+              <h2 class="text-2xl font-bold tracking-tight mt-1">Zero-Touch DOM &amp; API Fault Recovery Engine</h2>
+              <p class="text-sm text-alabaster/70 mt-1">
+                When an Indian directory modifies its HTML selectors, adds a CAPTCHA challenge, or throws a 502/Schema error, the recursive loop captures a shadow snapshot, synthesizes a patched selector, validates against unit tests, and hot-reloads without human intervention.
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button data-back-home="true" class="back-home-btn px-3 py-2 rounded-xl hairline-border text-xs font-mono hover:border-emerald">
+                ← Home
+              </button>
+              <button
+                id="btn-inject-fault"
+                class="px-4 py-2.5 rounded-xl hairline-border text-xs font-mono hover:border-emerald transition-all"
+              >
+                Inject DOM Selector Break
+              </button>
+              <button
+                id="btn-run-healer"
+                class="px-4 py-2.5 rounded-xl bg-emerald text-obsidian font-bold text-xs hover:opacity-90 transition-all"
+              >
+                Run Recursive Auto-Heal Loop
+              </button>
+            </div>
+          </div>
+
+          <!-- 4-Stage Loop State Visualizer -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-3 font-mono text-xs">
+            <div id="heal-stage-1" class="surface-card rounded-xl p-3.5 space-y-1">
+              <div class="text-emerald font-bold">STAGE 01 • DETECT</div>
+              <div class="text-alabaster/70 text-[11px]">Playwright / AST Telemetry Trap catches selector or schema failure.</div>
+            </div>
+            <div id="heal-stage-2" class="surface-card rounded-xl p-3.5 space-y-1">
+              <div class="text-emerald font-bold">STAGE 02 • DIAGNOSE</div>
+              <div class="text-alabaster/70 text-[11px]">Diff DOM tree against cached anchor weights &amp; semantic labels.</div>
+            </div>
+            <div id="heal-stage-3" class="surface-card rounded-xl p-3.5 space-y-1">
+              <div class="text-emerald font-bold">STAGE 03 • PATCH</div>
+              <div class="text-alabaster/70 text-[11px]">Synthesize fallback XPath/CSS &amp; rewrite adapter configuration.</div>
+            </div>
+            <div id="heal-stage-4" class="surface-card rounded-xl p-3.5 space-y-1">
+              <div class="text-emerald font-bold">STAGE 04 • VERIFY</div>
+              <div class="text-alabaster/70 text-[11px]">Execute sandbox regression test (`exit 0`) &amp; commit hot-reload.</div>
+            </div>
+          </div>
+
+          <!-- Live Self-Healing Terminal Output -->
+          <div class="rounded-xl hairline-border bg-obsidian p-4 font-mono text-xs space-y-2">
+            <div class="flex items-center justify-between border-b border-alabaster/10 pb-2 text-[11px] text-alabaster/60">
+              <span>AUTONOMOUS_HEALER_DAEMON (PID 4419) • LOOP STATUS: <strong id="healer-status-label" class="text-emerald">CONVERGED (0 ERRORS)</strong></span>
+              <span id="healer-iter-badge">ITERATION: 4 / 4</span>
+            </div>
+            <div id="healer-terminal-log" class="space-y-1.5 max-h-60 overflow-y-auto text-[11px] leading-relaxed">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- MODULE F: SUBSCRIPTION & MONETIZATION TIER (RAZORPAY / UPI)       -->
+      <!-- ================================================================= -->
+      <section id="panel-pricing" class="tab-panel hidden space-y-5">
+        <div class="surface-card rounded-2xl p-6 lg:p-8 space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-4 border-b border-alabaster/10 pb-5">
+            <div>
+              <span class="text-xs font-mono uppercase tracking-widest text-emerald">Module E • Continuous Monitoring SaaS</span>
+              <h2 class="text-2xl font-bold tracking-tight mt-1">Automated Re-Scanning &amp; Privacy Protection Plans</h2>
+              <p class="text-sm text-alabaster/70 mt-1">
+                Indian lead-generation brokers re-scrape phone numbers every 30–45 days. Recurring monitoring automatically detects and erases new leaks.
+              </p>
+            </div>
+            <!-- Billing Cycle Toggle -->
+            <div class="flex items-center gap-2 surface-card p-1 rounded-xl">
+              <button id="bill-monthly" class="px-3 py-1.5 rounded-lg text-xs font-mono text-alabaster/70">
+                Monthly
+              </button>
+              <button id="bill-annual" class="px-3 py-1.5 rounded-lg text-xs font-mono bg-emerald text-obsidian font-bold">
+                Annual (Save 40%)
+              </button>
+            </div>
+          </div>
+
+          <!-- 3 Pricing Tiers -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Tier 1: Free Audit -->
+            <div class="surface-card rounded-2xl p-5 flex flex-col justify-between space-y-5">
+              <div class="space-y-3">
+                <span class="text-xs font-mono uppercase text-alabaster/60">Discovery Tier</span>
+                <h3 class="text-lg font-bold">Basic Scan</h3>
+                <div class="text-2xl font-bold font-mono">₹0 <span class="text-xs font-normal text-alabaster/60">/ forever</span></div>
+                <ul class="space-y-2 text-xs text-alabaster/80 pt-2">
+                  <li>✓ One-time scan across 17+ Indian directories</li>
+                  <li>✓ Exposure severity breakdown (+91 &amp; Email)</li>
+                  <li>✓ Manual DIY opt-out guide links</li>
+                </ul>
+              </div>
+              <button data-plan="Basic Scan (Free)" class="plan-select-btn w-full py-2.5 rounded-xl hairline-border text-xs font-mono hover:border-emerald transition-all">
+                Current Active Baseline
+              </button>
+            </div>
+
+            <!-- Tier 2: PrivaIndia Shield (Highlighted) -->
+            <div class="surface-card-active rounded-2xl p-5 flex flex-col justify-between space-y-5">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-mono uppercase text-emerald">Most Popular</span>
+                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald text-obsidian font-bold">UPI AUTOPAY</span>
+                </div>
+                <h3 class="text-lg font-bold">PrivaIndia Pro Shield</h3>
+                <div class="text-2xl font-bold font-mono text-emerald">
+                  <span id="price-pro">₹149</span> <span class="text-xs font-normal text-alabaster/70">/ month</span>
+                </div>
+                <ul class="space-y-2 text-xs text-alabaster/90 pt-2">
+                  <li>✓ Automated removal across 17+ Indian brokers</li>
+                  <li>✓ Bi-weekly autonomous re-scans &amp; auto-erasure</li>
+                  <li>✓ Legal DPDP Section 12(3) Grievance escalation</li>
+                  <li>✓ Real-time Web + Mobile Push Sync</li>
+                </ul>
+              </div>
+              <button data-plan="PrivaIndia Pro Shield" class="plan-select-btn w-full py-2.5 rounded-xl bg-emerald text-obsidian font-bold text-xs hover:opacity-90 transition-all">
+                Activate Pro Shield via UPI
+              </button>
+            </div>
+
+            <!-- Tier 3: Family & Executive -->
+            <div class="surface-card rounded-2xl p-5 flex flex-col justify-between space-y-5">
+              <div class="space-y-3">
+                <span class="text-xs font-mono uppercase text-alabaster/60">Household Protection</span>
+                <h3 class="text-lg font-bold">Family Parivar (4 Numbers)</h3>
+                <div class="text-2xl font-bold font-mono">
+                  <span id="price-family">₹349</span> <span class="text-xs font-normal text-alabaster/60">/ month</span>
+                </div>
+                <ul class="space-y-2 text-xs text-alabaster/80 pt-2">
+                  <li>✓ Protect up to 4 Indian (+91) mobile numbers</li>
+                  <li>✓ Senior-citizen anti-loan spam priority shield</li>
+                  <li>✓ Dedicated human privacy paralegal escalation</li>
+                  <li>✓ Cert-In &amp; CyberCell dossier export</li>
+                </ul>
+              </div>
+              <button data-plan="Family Parivar Plan" class="plan-select-btn w-full py-2.5 rounded-xl hairline-border text-xs font-mono hover:border-emerald transition-all">
+                Select Family Parivar
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- RIGHT / SYNCHRONIZED MOBILE COMPANION FRAME (4 cols) -->
+    <aside id="mobile-companion-col" class="lg:col-span-4 flex flex-col items-center">
+      <div class="w-full max-w-[360px] rounded-[36px] p-3.5 bg-obsidian border-2 border-alabaster/25 shadow-2xl space-y-3">
+        <!-- Phone Top Notch & Status Bar -->
+        <div class="flex items-center justify-between px-3 pt-1 text-[10px] font-mono text-alabaster/70">
+          <span>JioTrue5G • +91</span>
+          <div class="w-16 h-3.5 rounded-full bg-alabaster/10 border border-alabaster/15"></div>
+          <span class="text-emerald">SYNCED ●</span>
+        </div>
+
+        <!-- Mobile Screen Body -->
+        <div class="rounded-[26px] hairline-border bg-obsidian p-4 space-y-4 min-h-[540px] flex flex-col justify-between">
+          <div class="space-y-4">
+            <!-- Mobile Header with Back & Menu -->
+            <div class="flex items-center justify-between border-b border-alabaster/10 pb-3">
+              <div class="flex items-center gap-1.5">
+                <button id="btn-mobile-back" class="px-2 py-1 rounded hairline-border text-[10px] font-mono text-alabaster/80 hover:border-emerald">
+                  ←
+                </button>
+                <div>
+                  <div class="text-xs font-bold tracking-tight">PrivaIndia App</div>
+                  <div id="mobile-sub-header" class="text-[10px] font-mono text-emerald">+91 98204 71920</div>
+                </div>
+              </div>
+              <span id="mobile-active-screen-pill" class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald/15 text-emerald border border-emerald/40">
+                HOME
+              </span>
+            </div>
+
+            <!-- Mobile Live Protection Ring / Status -->
+            <div class="surface-card-active rounded-2xl p-4 text-center space-y-1.5">
+              <div class="text-[10px] font-mono uppercase text-emerald">DPDP Erasure Score</div>
+              <div id="mobile-score-ring" class="text-3xl font-black font-mono text-alabaster">75%</div>
+              <div id="mobile-status-summary" class="text-[11px] text-alabaster/75">
+                9 Removed • 3 Pending • 2 Exempt
+              </div>
+            </div>
+
+            <!-- Mobile Quick Action Feed (Synchronized with Web State) -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-[10px] font-mono uppercase text-alabaster/60">
+                <span>Websites &amp; Apps Using Your Data</span>
+                <span class="text-emerald">Tap to Toggle</span>
+              </div>
+              <div id="mobile-broker-feed" class="space-y-2 max-h-[250px] overflow-y-auto pr-1">
+                <!-- Populated dynamically in sync with Web state -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Bottom Action & Navigation Bar -->
+          <div class="space-y-2.5 pt-2 border-t border-alabaster/10">
+            <button
+              id="btn-mobile-quick-dispatch"
+              class="w-full py-2.5 rounded-xl bg-emerald text-obsidian font-bold text-xs tracking-tight hover:opacity-90 transition-all"
+            >
+              One-Tap Sync &amp; Authorise Removal
+            </button>
+            <div class="grid grid-cols-5 gap-1 text-center font-mono text-[10px]">
+              <button data-mobtab="home" class="mob-nav-btn py-1.5 rounded bg-alabaster/10 text-emerald font-bold">Home</button>
+              <button data-mobtab="intake" class="mob-nav-btn py-1.5 rounded text-alabaster/70">Intake</button>
+              <button data-mobtab="scanner" class="mob-nav-btn py-1.5 rounded text-alabaster/70">Scan</button>
+              <button data-mobtab="consent" class="mob-nav-btn py-1.5 rounded text-alabaster/70">Consent</button>
+              <button data-mobtab="dashboard" class="mob-nav-btn py-1.5 rounded text-alabaster/70">Ledger</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- TOAST NOTIFICATION CONTAINER (NO NATIVE ALERT/CONFIRM) -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 max-w-sm w-full pointer-events-none"></div>
+
+  <!-- APPLICATION STATE & SELF-HEALING ENGINE SCRIPT -->
+  <script>
+    // 1. Canonical Dataset: 17 Targeted Indian Directories, Loan Aggregators & Data Brokers
+    const INITIAL_BROKERS = [
+      { id: 'BRK-01', name: 'BajajFin LeadMart DSA', domain: 'leadmart-dsa.in', category: 'DSA Loan/Credit', exposed: ['+91 Phone', 'Full Name', 'PAN Prefix'], removable: true, selected: true, status: 'REMOVED', channel: 'Automated Opt-Out API' },
+      { id: 'BRK-02', name: 'Paisabazaar Syndication Pool', domain: 'paisabazaar-partner.in', category: 'DSA Loan/Credit', exposed: ['+91 Phone', 'Email', 'Credit Tier'], removable: true, selected: true, status: 'REMOVED', channel: 'DPDP Sec 12 Webhook' },
+      { id: 'BRK-03', name: 'Justdial Local Directory', domain: 'justdial.com', category: 'B2B & Local Directory', exposed: ['+91 Phone', 'Full Name', 'City Circle'], removable: true, selected: true, status: 'REMOVED', channel: 'Playwright Stealth Form' },
+      { id: 'BRK-04', name: 'IndiaMART Supplier Index', domain: 'indiamart.com', category: 'B2B & Local Directory', exposed: ['+91 Phone', 'Full Name', 'Email'], removable: true, selected: true, status: 'PENDING', channel: 'DPO Signed Notice' },
+      { id: 'BRK-05', name: 'Truecaller Public Web Cache', domain: 'truecaller.com', category: 'Caller-ID / People', exposed: ['+91 Phone', 'Full Name', 'Carrier Circle'], removable: true, selected: true, status: 'REMOVED', channel: 'Automated Unlist Flow' },
+      { id: 'BRK-06', name: 'Sulekha Lead Exchange', domain: 'sulekha.com', category: 'B2B & Local Directory', exposed: ['+91 Phone', 'Full Name'], removable: true, selected: true, status: 'REMOVED', channel: 'Playwright Stealth Form' },
+      { id: 'BRK-07', name: '99acres Broker Lead Pool', domain: '99acres.com', category: 'Classifieds & Property', exposed: ['+91 Phone', 'Email'], removable: true, selected: true, status: 'PENDING', channel: 'DPDP Sec 12 Webhook' },
+      { id: 'BRK-08', name: 'MagicBricks Caller Syndicate', domain: 'magicbricks.com', category: 'Classifieds & Property', exposed: ['+91 Phone', 'Full Name'], removable: true, selected: true, status: 'REMOVED', channel: 'Playwright Stealth Form' },
+      { id: 'BRK-09', name: 'Quikr Classifieds Archive', domain: 'quikr.com', category: 'Classifieds & Property', exposed: ['+91 Phone', 'Email'], removable: true, selected: true, status: 'REMOVED', channel: 'Automated Opt-Out API' },
+      { id: 'BRK-10', name: 'Wishfin Credit Tele-Leads', domain: 'wishfin.com', category: 'DSA Loan/Credit', exposed: ['+91 Phone', 'Full Name'], removable: true, selected: true, status: 'REMOVED', channel: 'DPDP Sec 12 Webhook' },
+      { id: 'BRK-11', name: 'BankBazaar Partner Affiliate', domain: 'bankbazaar.com', category: 'DSA Loan/Credit', exposed: ['+91 Phone', 'Email'], removable: true, selected: true, status: 'PENDING', channel: 'DPO Signed Notice' },
+      { id: 'BRK-12', name: 'LushA India B2B Contact Graph', domain: 'lusha.com', category: 'Caller-ID / People', exposed: ['+91 Phone', 'Email', 'Role'], removable: true, selected: true, status: 'REMOVED', channel: 'Automated Opt-Out API' },
+      { id: 'BRK-13', name: 'SignalHire India Directory', domain: 'signalhire.com', category: 'Caller-ID / People', exposed: ['+91 Phone', 'Email'], removable: true, selected: true, status: 'EXPOSED', channel: 'Playwright Stealth Form' },
+      { id: 'BRK-14', name: 'MyLoanCare Tele-Aggregator', domain: 'myloancare.in', category: 'DSA Loan/Credit', exposed: ['+91 Phone', 'Full Name'], removable: true, selected: true, status: 'EXPOSED', channel: 'DPO Signed Notice' },
+      { id: 'BRK-15', name: 'TradeIndia Catalog Registry', domain: 'tradeindia.com', category: 'B2B & Local Directory', exposed: ['+91 Phone', 'Full Name'], removable: true, selected: false, status: 'CLEAR', channel: 'Automated Opt-Out API' },
+      { id: 'BRK-16', name: 'MCA Director Master Data (Govt)', domain: 'mca.gov.in', category: 'Public Gazette / Govt', exposed: ['Full Name', 'DIN Record'], removable: false, selected: false, status: 'NOT_REMOVABLE', channel: 'DPDP Sec 3(c) Exempt' },
+      { id: 'BRK-17', name: 'Maharashtra Gazette Registry', domain: 'dgps.maharashtra.gov.in', category: 'Public Gazette / Govt', exposed: ['Full Name', 'Public Filing'], removable: false, selected: false, status: 'NOT_REMOVABLE', channel: 'DPDP Sec 3(c) Exempt' }
+    ];
+
+    const TAB_TITLES = {
+      home: '/ Minimal Home Dashboard',
+      intake: '/ Step 1: Identity Intake',
+      scanner: '/ Step 2: Check Websites & Apps (17+)',
+      consent: '/ Step 3: Ask & Authorise Removal',
+      dashboard: '/ Step 4: Erasure Status Ledger',
+      healer: '/ Step 5: Self-Healing Engine',
+      pricing: '/ Step 6: Recurring Protection Plans'
+    };
+
+    const state = {
+      activeTab: 'home',
+      historyStack: ['home'],
+      phone: '9820471920',
+      name: 'Ranveer Sharma',
+      email: 'ranveer.privacy@proton.me',
+      circle: 'Mumbai / Maharashtra (MH)',
+      consentGiven: true,
+      consentToken: 'DPDP-IN-2026-88419A',
+      categoryFilter: 'ALL',
+      mobileVisible: true,
+      annualBilling: true,
+      scanProgress: 17,
+      scanTimer: null,
+      brokers: JSON.parse(JSON.stringify(INITIAL_BROKERS)),
+      healerLogs: [
+        '[10:08:12] [WATCHDOG] Monitoring 17 Indian broker Playwright adapters & FastAPI schemas...',
+        '[10:08:14] [WARN] Adapter BRK-03 (justdial.com) threw TimeoutError on selector `button.optout-submit-v1`.',
+        '[10:08:15] [DIAGNOSE] Captured shadow DOM snapshot; semantic similarity matched `button[data-testid="jd-privacy-erase"]` (score: 0.98).',
+        '[10:08:16] [PATCH] Hot-patched adapter BRK-03 selector & re-executed sandbox verification test.',
+        '[10:08:17] [VERIFY] Pytest + Playwright E2E suite passed (17/17 green, exit code 0).'
+      ]
+    };
+
+    // Toast helper (Canvas-safe)
+    function showToast(title, detail) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'surface-card-active bg-obsidian p-3.5 rounded-xl shadow-xl pointer-events-auto transition-all';
+      toast.innerHTML = `
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-xs font-mono font-bold text-emerald">${title}</span>
+          <span class="text-[10px] font-mono text-alabaster/60">WS SYNCED</span>
+        </div>
+        <p class="text-xs text-alabaster/90 mt-1">${detail}</p>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.remove();
+      }, 3400);
+    }
+
+    // Tab Navigation Handler with History Stack for Back Button
+    function switchTab(tabId, pushHistory = true) {
+      if (pushHistory && state.activeTab !== tabId) {
+        state.historyStack.push(tabId);
+      }
+      state.activeTab = tabId;
+
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.add('hidden');
+      });
+      const targetPanel = document.getElementById('panel-' + tabId);
+      if (targetPanel) targetPanel.classList.remove('hidden');
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        if (btn.dataset.tab === tabId) {
+          btn.className = 'tab-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-emerald text-obsidian';
+        } else {
+          btn.className = 'tab-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all text-alabaster/75 hover:text-alabaster hairline-border';
+        }
+      });
+
+      document.querySelectorAll('.drawer-nav-btn').forEach(btn => {
+        if (btn.getAttribute('data-drawer-tab') === tabId) {
+          btn.className = 'drawer-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between bg-emerald text-obsidian';
+        } else {
+          btn.className = 'drawer-nav-btn w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium flex items-center justify-between hairline-border text-alabaster/85 hover:border-emerald';
+        }
+      });
+
+      document.querySelectorAll('.mob-nav-btn').forEach(btn => {
+        if (btn.dataset.mobtab === tabId) {
+          btn.className = 'mob-nav-btn py-1.5 rounded bg-alabaster/10 text-emerald font-bold';
+        } else {
+          btn.className = 'mob-nav-btn py-1.5 rounded text-alabaster/70';
+        }
+      });
+
+      const pill = document.getElementById('mobile-active-screen-pill');
+      if (pill) pill.textContent = tabId.toUpperCase();
+
+      const bc = document.getElementById('breadcrumb-current');
+      if (bc) bc.textContent = TAB_TITLES[tabId] || '/ Minimal Home Dashboard';
+
+      renderAll();
+    }
+
+    // Contextual Back Navigation
+    function handleGoBack() {
+      if (state.historyStack.length > 1) {
+        state.historyStack.pop();
+        const prevTab = state.historyStack[state.historyStack.length - 1] || 'home';
+        switchTab(prevTab, false);
+      } else if (state.activeTab !== 'home') {
+        switchTab('home', false);
+      } else {
+        showToast('At Home Dashboard', 'You are on the Minimal Home Dashboard.');
+      }
+    }
+
+    // Render Minimal Home Dashboard Detected Apps & Ask-to-Remove Cards
+    function renderHomeDashboard() {
+      const listEl = document.getElementById('home-detected-apps-list');
+      if (!listEl) return;
+
+      const exposedList = state.brokers.filter(b => b.status !== 'CLEAR');
+      const removableSelected = exposedList.filter(b => b.removable && b.selected && b.status !== 'REMOVED');
+      const removedCount = exposedList.filter(b => b.status === 'REMOVED').length;
+
+      document.getElementById('home-exposed-badge').textContent = `${exposedList.length} Apps/Sites`;
+      document.getElementById('home-card-selected-count').textContent = `${exposedList.filter(b => b.removable && b.selected).length} Selected for Removal`;
+      document.getElementById('home-card-removed-count').textContent = `${removedCount} Already Removed`;
+
+      const promptEl = document.getElementById('home-ask-prompt-text');
+      if (promptEl) {
+        if (removableSelected.length > 0) {
+          promptEl.textContent = `We found ${removableSelected.length} active websites/apps using your +91 ${state.phone} data (${removableSelected.map(x => x.name.split(' ')[0]).slice(0, 4).join(', ')}...). Ask PrivaIndia to remove them now?`;
+        } else {
+          promptEl.textContent = `All selected removable websites & apps have been queued or removed (${removedCount} verified erased).`;
+        }
+      }
+
+      // Show top 6 active websites/apps on the minimal home dashboard for easy 1-glance review
+      const homePreview = exposedList.slice(0, 6);
+      listEl.innerHTML = homePreview.map(b => {
+        const isRemoved = b.status === 'REMOVED';
+        const cardClass = b.selected && b.removable && !isRemoved ? 'surface-card-active' : 'surface-card';
+        return `
+          <div class="${cardClass} rounded-xl p-3.5 flex items-center justify-between gap-3">
+            <label class="flex items-start gap-2.5 cursor-pointer flex-1">
+              <input
+                type="checkbox"
+                data-home-broker="${b.id}"
+                class="home-broker-cb mt-1 w-4 h-4 accent-emerald rounded"
+                ${b.selected && b.removable ? 'checked' : ''}
+                ${!b.removable ? 'disabled' : ''}
+              />
+              <div>
+                <div class="text-xs font-bold text-alabaster">${b.name}</div>
+                <div class="text-[11px] font-mono text-alabaster/60">${b.domain} • Using: ${b.exposed.slice(0, 2).join(', ')}</div>
+              </div>
+            </label>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded border ${isRemoved ? 'bg-emerald/15 text-emerald border-emerald/40' : 'bg-alabaster/10 text-alabaster border-alabaster/20'}">
+              ${b.status}
+            </span>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('.home-broker-cb').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+          const id = e.target.getAttribute('data-home-broker');
+          const broker = state.brokers.find(item => item.id === id);
+          if (broker && broker.removable) {
+            broker.selected = e.target.checked;
+            renderAll();
+          }
+        });
+      });
+    }
+
+    // Render Scanner Grid (Module B)
+    function renderScannerGrid() {
+      const grid = document.getElementById('scanner-results-grid');
+      if (!grid) return;
+      const filtered = state.brokers.filter(b => state.categoryFilter === 'ALL' || b.category === state.categoryFilter);
+      grid.innerHTML = filtered.map((b) => {
+        const isClear = b.status === 'CLEAR';
+        const isExempt = !b.removable;
+        const badgeText = isClear ? 'NO LEAK' : (isExempt ? 'STATUTORY EXEMPT' : b.status);
+        const badgeClass = b.status === 'REMOVED' || isClear
+          ? 'bg-emerald/15 text-emerald border-emerald/40'
+          : 'bg-alabaster/10 text-alabaster border-alabaster/25';
+
+        return `
+          <div class="surface-card rounded-xl p-4 flex flex-col justify-between gap-3">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-[11px] font-mono text-emerald">${b.id}</span>
+                  <h4 class="text-sm font-bold text-alabaster">${b.name}</h4>
+                </div>
+                <div class="text-xs font-mono text-alabaster/60">${b.domain} • ${b.category}</div>
+              </div>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded border ${badgeClass}">
+                ${badgeText}
+              </span>
+            </div>
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-alabaster/10 text-xs">
+              <div class="font-mono text-[11px] text-alabaster/80">
+                Using Data: <strong class="text-alabaster">${b.exposed.join(', ')}</strong>
+              </div>
+              <span class="text-[11px] font-mono text-emerald">${b.channel}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Render Granular Consent Selection (Module C)
+    function renderConsentList() {
+      const container = document.getElementById('consent-list-container');
+      if (!container) return;
+
+      const exposedBrokers = state.brokers.filter(b => b.status !== 'CLEAR');
+      const selectedCount = exposedBrokers.filter(b => b.removable && b.selected).length;
+      const exemptCount = exposedBrokers.filter(b => !b.removable).length;
+
+      document.getElementById('consent-stat-exposed').textContent = String(exposedBrokers.length);
+      document.getElementById('consent-stat-selected').textContent = String(selectedCount);
+      document.getElementById('consent-stat-exempt').textContent = String(exemptCount);
+
+      container.innerHTML = exposedBrokers.map(b => {
+        const cardStyle = b.selected && b.removable ? 'surface-card-active' : 'surface-card';
+        return `
+          <div class="${cardStyle} rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-3">
+            <label class="flex items-center gap-3 cursor-pointer flex-1">
+              <input
+                type="checkbox"
+                data-broker-id="${b.id}"
+                class="broker-consent-checkbox w-4 h-4 accent-emerald rounded"
+                ${b.selected && b.removable ? 'checked' : ''}
+                ${!b.removable ? 'disabled' : ''}
+              />
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-bold text-alabaster">${b.name}</span>
+                  <span class="text-[11px] font-mono text-alabaster/60">(${b.domain})</span>
+                </div>
+                <div class="text-[11px] font-mono text-alabaster/70">
+                  Leaked Fields: ${b.exposed.join(' • ')} | Method: ${b.channel}
+                </div>
+              </div>
+            </label>
+            <div>
+              ${b.removable
+                ? `<span class="text-[10px] font-mono px-2.5 py-1 rounded bg-emerald/15 text-emerald border border-emerald/40">REMOVABLE (${b.status})</span>`
+                : `<span class="text-[10px] font-mono px-2.5 py-1 rounded bg-alabaster/10 text-alabaster/70 border border-alabaster/20">NOT REMOVABLE (GOVT RECORD)</span>`
+              }
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('.broker-consent-checkbox').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+          const id = e.target.getAttribute('data-broker-id');
+          const found = state.brokers.find(item => item.id === id);
+          if (found && found.removable) {
+            found.selected = e.target.checked;
+            renderAll();
+          }
+        });
+      });
+    }
+
+    // Render Centralized Privacy Dashboard (Module D)
+    function renderDashboard() {
+      const tracked = state.brokers.filter(b => b.status !== 'CLEAR');
+      const removed = tracked.filter(b => b.status === 'REMOVED').length;
+      const pending = tracked.filter(b => b.status === 'PENDING' || b.status === 'EXPOSED').length;
+      const exempt = tracked.filter(b => !b.removable).length;
+
+      document.getElementById('dash-metric-total').textContent = String(tracked.length);
+      document.getElementById('dash-metric-removed').textContent = String(removed);
+      document.getElementById('dash-metric-pending').textContent = String(pending);
+      document.getElementById('dash-metric-exempt').textContent = String(exempt);
+
+      const tbody = document.getElementById('dashboard-ledger-body');
+      if (!tbody) return;
+      tbody.innerHTML = tracked.map(b => {
+        const isRemoved = b.status === 'REMOVED';
+        const statusPill = isRemoved
+          ? '<span class="px-2 py-0.5 rounded bg-emerald/20 text-emerald">✓ REMOVED</span>'
+          : (!b.removable
+              ? '<span class="px-2 py-0.5 rounded bg-alabaster/10 text-alabaster/60">EXEMPT</span>'
+              : `<span class="px-2 py-0.5 rounded bg-alabaster/15 text-alabaster">${b.status}</span>`);
+
+        return `
+          <tr class="hover:bg-alabaster/5">
+            <td class="py-2.5 px-3.5 font-sans font-semibold text-alabaster">${b.name}</td>
+            <td class="py-2.5 px-3.5 text-alabaster/70">${b.category}</td>
+            <td class="py-2.5 px-3.5 text-alabaster/70">${b.channel}</td>
+            <td class="py-2.5 px-3.5">${statusPill}</td>
+            <td class="py-2.5 px-3.5 text-right">
+              ${b.removable && b.status !== 'REMOVED'
+                ? `<button data-force-id="${b.id}" class="force-remove-btn px-2.5 py-1 rounded bg-emerald text-obsidian font-bold text-[10px]">Verify Erasure</button>`
+                : `<span class="text-[10px] text-alabaster/50">${b.removable ? 'ACK-200-OK' : 'STATUTORY'}</span>`
+              }
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      document.querySelectorAll('.force-remove-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-force-id');
+          const broker = state.brokers.find(item => item.id === id);
+          if (broker) {
+            broker.status = 'REMOVED';
+            broker.selected = true;
+            showToast('Erasure Verified', `${broker.name} confirmed deletion under DPDP Act Sec 12(3).`);
+            renderAll();
+          }
+        });
+      });
+    }
+
+    // Render Mobile Companion Feed
+    function renderMobileCompanion() {
+      const tracked = state.brokers.filter(b => b.status !== 'CLEAR');
+      const removed = tracked.filter(b => b.status === 'REMOVED').length;
+      const pending = tracked.filter(b => b.status === 'PENDING' || b.status === 'EXPOSED').length;
+      const exempt = tracked.filter(b => !b.removable).length;
+      const removableTotal = tracked.filter(b => b.removable).length;
+      const pct = removableTotal > 0 ? Math.round((removed / removableTotal) * 100) : 100;
+
+      document.getElementById('mobile-sub-header').textContent = `+91 ${state.phone} • ${state.name.split(' ')[0]}`;
+      document.getElementById('active-user-pill').textContent = `+91 ${state.phone} • ${state.name}`;
+      document.getElementById('mobile-score-ring').textContent = `${pct}%`;
+      document.getElementById('mobile-status-summary').textContent = `${removed} Removed • ${pending} Pending • ${exempt} Exempt`;
+
+      const feed = document.getElementById('mobile-broker-feed');
+      if (!feed) return;
+      feed.innerHTML = tracked.slice(0, 8).map(b => `
+        <div data-mob-broker="${b.id}" class="mob-broker-row surface-card rounded-xl p-2.5 flex items-center justify-between text-[11px] cursor-pointer hover:border-emerald">
+          <div>
+            <div class="font-semibold text-alabaster">${b.name}</div>
+            <div class="font-mono text-[10px] text-alabaster/60">${b.exposed.slice(0, 2).join(', ')}</div>
+          </div>
+          <span class="font-mono text-[10px] px-2 py-0.5 rounded ${b.status === 'REMOVED' ? 'bg-emerald/20 text-emerald' : 'bg-alabaster/10 text-alabaster/80'}">
+            ${b.status}
+          </span>
+        </div>
+      `).join('');
+
+      document.querySelectorAll('.mob-broker-row').forEach(row => {
+        row.addEventListener('click', () => {
+          const id = row.getAttribute('data-mob-broker');
+          const found = state.brokers.find(item => item.id === id);
+          if (found && found.removable && found.status !== 'REMOVED') {
+            found.status = 'REMOVED';
+            found.selected = true;
+            showToast('Mobile One-Tap Erase', `${found.name} erased & synced to Web.`);
+            renderAll();
+          }
+        });
+      });
+    }
+
+    // Render Self-Healing Terminal
+    function renderHealerLogs() {
+      const logBox = document.getElementById('healer-terminal-log');
+      if (!logBox) return;
+      logBox.innerHTML = state.healerLogs.map(line => {
+        const isEmerald = line.includes('[VERIFY]') || line.includes('[PATCH]');
+        return `<div class="${isEmerald ? 'text-emerald' : 'text-alabaster/80'}">${line}</div>`;
+      }).join('');
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    function renderAll() {
+      renderHomeDashboard();
+      renderScannerGrid();
+      renderConsentList();
+      renderDashboard();
+      renderMobileCompanion();
+      renderHealerLogs();
+    }
+
+    // Interactive Simulation: Live 01 to 17 Scanner Animation (First checks websites/apps, then asks user)
+    function startLiveScannerAnimation() {
+      if (state.scanTimer) clearInterval(state.scanTimer);
+      state.scanProgress = 1;
+      switchTab('scanner');
+
+      const headline = document.getElementById('scan-headline');
+      const stepLabel = document.getElementById('scan-step-label');
+      const badge = document.getElementById('scan-counter-badge');
+      const bar = document.getElementById('scan-progress-bar');
+
+      state.scanTimer = setInterval(() => {
+        const currentBroker = state.brokers[state.scanProgress - 1];
+        const numStr = String(state.scanProgress).padStart(2, '0');
+        headline.textContent = `Checking websites & apps using +91 ${state.phone} (${numStr} of 17)...`;
+        stepLabel.textContent = `CHECKING ${currentBroker.domain.toUpperCase()} (${currentBroker.category})`;
+        const pct = Math.round((state.scanProgress / 17) * 100);
+        badge.textContent = `${numStr} / 17 (${pct}%)`;
+        bar.style.width = `${pct}%`;
+
+        if (state.scanProgress >= 17) {
+          clearInterval(state.scanTimer);
+          state.scanTimer = null;
+          headline.textContent = 'Check Complete: 14 Websites & Apps Are Using Your Data';
+          stepLabel.textContent = 'STEP 1 COMPLETE — CLICK "NEXT: ASK TO REMOVE DATA" TO APPROVE ERASURE';
+          showToast('14 Websites/Apps Found', 'Review which apps are using your data and approve removal.');
+        } else {
+          state.scanProgress += 1;
+        }
+      }, 120);
+    }
+
+    // Wire All Event Listeners on DOM Ready
+    window.addEventListener('DOMContentLoaded', () => {
+      // Slide-out Menu Drawer Open/Close
+      const menuBackdrop = document.getElementById('menu-backdrop');
+      document.getElementById('btn-open-menu').addEventListener('click', () => {
+        menuBackdrop.classList.remove('hidden');
+      });
+      document.getElementById('btn-close-menu').addEventListener('click', () => {
+        menuBackdrop.classList.add('hidden');
+      });
+      menuBackdrop.addEventListener('click', (e) => {
+        if (e.target === menuBackdrop) menuBackdrop.classList.add('hidden');
+      });
+
+      document.querySelectorAll('.drawer-nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.getAttribute('data-drawer-tab');
+          menuBackdrop.classList.add('hidden');
+          switchTab(target);
+        });
+      });
+
+      // Global & Mobile Back Buttons
+      document.getElementById('btn-global-back').addEventListener('click', handleGoBack);
+      document.getElementById('btn-mobile-back').addEventListener('click', handleGoBack);
+
+      // Back-to-Home Buttons inside panels
+      document.querySelectorAll('.back-home-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab('home'));
+      });
+
+      // Top Navigation Tabs
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+      });
+
+      // Mobile Companion Bottom Tabs
+      document.querySelectorAll('.mob-nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.mobtab));
+      });
+
+      // Home Dashboard Quick Check & Ask-to-Remove Actions
+      document.getElementById('btn-home-check-apps').addEventListener('click', () => {
+        const phoneInput = document.getElementById('home-quick-phone').value.replace(/\D/g, '');
+        if (phoneInput.length === 10) {
+          state.phone = phoneInput;
+          document.getElementById('input-phone').value = phoneInput;
+        }
+        startLiveScannerAnimation();
+      });
+
+      document.getElementById('btn-home-see-all-17').addEventListener('click', () => switchTab('scanner'));
+      document.getElementById('btn-home-review-granular').addEventListener('click', () => switchTab('consent'));
+
+      document.querySelectorAll('.quick-nav-card').forEach(card => {
+        card.addEventListener('click', () => switchTab(card.getAttribute('data-quick-nav')));
+      });
+
+      function dispatchSelectedRemovals() {
+        let dispatched = 0;
+        state.brokers.forEach(b => {
+          if (b.removable && b.selected && b.status !== 'REMOVED') {
+            b.status = 'REMOVED';
+            dispatched += 1;
+          }
+        });
+        showToast('User Approved Removal', `Removed data from ${dispatched} selected websites/apps under DPDP Sec 12.`);
+        switchTab('dashboard');
+      }
+
+      document.getElementById('btn-home-confirm-remove').addEventListener('click', dispatchSelectedRemovals);
+      document.getElementById('btn-authorise-removal').addEventListener('click', dispatchSelectedRemovals);
+      document.getElementById('btn-mobile-quick-dispatch').addEventListener('click', dispatchSelectedRemovals);
+
+      // Toggle Mobile Companion Visibility
+      document.getElementById('btn-toggle-mobile').addEventListener('click', (e) => {
+        state.mobileVisible = !state.mobileVisible;
+        const mobCol = document.getElementById('mobile-companion-col');
+        const webCol = document.getElementById('web-viewport');
+        if (state.mobileVisible) {
+          mobCol.classList.remove('hidden');
+          webCol.className = 'lg:col-span-8 space-y-6';
+          e.target.textContent = 'Phone Companion: ON';
+        } else {
+          mobCol.classList.add('hidden');
+          webCol.className = 'lg:col-span-12 space-y-6';
+          e.target.textContent = 'Phone Companion: OFF';
+        }
+      });
+
+      // Module A Intake Form Submit
+      document.getElementById('intake-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const phoneVal = document.getElementById('input-phone').value.replace(/\D/g, '');
+        if (phoneVal.length !== 10) {
+          document.getElementById('phone-validation-msg').textContent = '⚠ Enter a valid 10-digit Indian (+91) mobile number';
+          return;
+        }
+        state.phone = phoneVal;
+        document.getElementById('home-quick-phone').value = phoneVal;
+        state.name = document.getElementById('input-name').value.trim() || 'Ranveer Sharma';
+        state.email = document.getElementById('input-email').value.trim() || 'ranveer.privacy@proton.me';
+        state.circle = document.getElementById('input-circle').value;
+        state.consentToken = 'DPDP-IN-2026-' + Math.floor(10000 + Math.random() * 89999) + 'B';
+        document.getElementById('consent-token-preview').textContent = state.consentToken;
+        startLiveScannerAnimation();
+      });
+
+      // Demo Profile Button
+      document.getElementById('btn-demo-populate').addEventListener('click', () => {
+        document.getElementById('input-phone').value = '9820471920';
+        document.getElementById('home-quick-phone').value = '9820471920';
+        document.getElementById('input-name').value = 'Ranveer Sharma';
+        document.getElementById('input-email').value = 'ranveer.privacy@proton.me';
+        state.brokers = JSON.parse(JSON.stringify(INITIAL_BROKERS));
+        renderAll();
+        showToast('Profile Restored', 'Loaded sample +91 98204 71920 exposure state.');
+      });
+
+      // Module B Scanner Controls
+      document.getElementById('btn-rerun-scan').addEventListener('click', () => startLiveScannerAnimation());
+      document.getElementById('btn-jump-consent').addEventListener('click', () => switchTab('consent'));
+
+      document.querySelectorAll('.cat-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.categoryFilter = btn.getAttribute('data-cat');
+          document.querySelectorAll('.cat-filter-btn').forEach(b => {
+            b.className = 'cat-filter-btn px-3 py-1 rounded-lg text-xs font-mono hairline-border text-alabaster/75';
+          });
+          btn.className = 'cat-filter-btn px-3 py-1 rounded-lg text-xs font-mono bg-emerald text-obsidian font-semibold';
+          renderScannerGrid();
+        });
+      });
+
+      // Module C Consent Controls
+      document.getElementById('btn-select-all-removable').addEventListener('click', () => {
+        state.brokers.forEach(b => { if (b.removable) b.selected = true; });
+        renderAll();
+      });
+
+      document.getElementById('btn-deselect-all').addEventListener('click', () => {
+        state.brokers.forEach(b => { b.selected = false; });
+        renderAll();
+      });
+
+      // Module D Dashboard Queue Advance & Export
+      document.getElementById('btn-simulate-tick').addEventListener('click', () => {
+        const pendingItem = state.brokers.find(b => b.removable && (b.status === 'PENDING' || b.status === 'EXPOSED'));
+        if (pendingItem) {
+          pendingItem.status = 'REMOVED';
+          pendingItem.selected = true;
+          showToast('Worker Completed Job', `${pendingItem.name} returned HTTP 200 Erasure Receipt.`);
+          renderAll();
+        } else {
+          showToast('All Removable Listings Cleared', '100% of removable Indian broker exposures are now erased.');
+        }
+      });
+
+      document.getElementById('btn-export-audit').addEventListener('click', () => {
+        const payload = JSON.stringify({
+          consentArtefact: state.consentToken,
+          principal: `+91-${state.phone}`,
+          timestamp: new Date().toISOString(),
+          summary: state.brokers.map(b => ({ id: b.id, domain: b.domain, status: b.status }))
+        }, null, 2);
+        try {
+          navigator.clipboard.writeText(payload);
+        } catch (err) {
+          const ta = document.createElement('textarea');
+          ta.value = payload;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+        }
+        showToast('DPDP Audit JSON Copied', 'Cryptographic compliance log copied to clipboard.');
+      });
+
+      // Module E Self-Healing Controls
+      document.getElementById('btn-inject-fault').addEventListener('click', () => {
+        document.getElementById('healer-status-label').textContent = 'FAULT DETECTED (DOM DRIFT)';
+        state.healerLogs.push(`[${new Date().toLocaleTimeString()}] [FAULT] Adapter BRK-07 (99acres.com) failed: ElementNotInteractableError on '#optOutFormBtn'.`);
+        renderHealerLogs();
+        showToast('DOM Fault Injected', 'Simulated selector break on 99acres.com opt-out adapter.');
+      });
+
+      document.getElementById('btn-run-healer').addEventListener('click', () => {
+        const ts = new Date().toLocaleTimeString();
+        state.healerLogs.push(`[${ts}] [DIAGNOSE] Inspecting shadow DOM AST on 99acres.com... matched fallback '//button[contains(text(),"Erase My Data")]'.`);
+        state.healerLogs.push(`[${ts}] [PATCH] Updated adapter selector in Redis hot-config & re-ran Playwright verification.`);
+        state.healerLogs.push(`[${ts}] [VERIFY] Regression suite passed (0 errors, exit code 0). Pipeline healed.`);
+        document.getElementById('healer-status-label').textContent = 'CONVERGED (0 ERRORS)';
+        renderHealerLogs();
+        showToast('Autonomous Heal Complete', 'Selector synthesized, verified, and hot-reloaded with 0 errors.');
+      });
+
+      // Module F Pricing Toggle & Selection
+      document.getElementById('bill-monthly').addEventListener('click', () => {
+        state.annualBilling = false;
+        document.getElementById('price-pro').textContent = '₹249';
+        document.getElementById('price-family').textContent = '₹599';
+        document.getElementById('bill-monthly').className = 'px-3 py-1.5 rounded-lg text-xs font-mono bg-emerald text-obsidian font-bold';
+        document.getElementById('bill-annual').className = 'px-3 py-1.5 rounded-lg text-xs font-mono text-alabaster/70';
+      });
+
+      document.getElementById('bill-annual').addEventListener('click', () => {
+        state.annualBilling = true;
+        document.getElementById('price-pro').textContent = '₹149';
+        document.getElementById('price-family').textContent = '₹349';
+        document.getElementById('bill-annual').className = 'px-3 py-1.5 rounded-lg text-xs font-mono bg-emerald text-obsidian font-bold';
+        document.getElementById('bill-monthly').className = 'px-3 py-1.5 rounded-lg text-xs font-mono text-alabaster/70';
+      });
+
+      document.querySelectorAll('.plan-select-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const plan = btn.getAttribute('data-plan');
+          showToast('Subscription Updated', `Selected ${plan} (${state.annualBilling ? 'Annual UPI AutoPay' : 'Monthly Cycle'}).`);
+        });
+      });
+
+      // Initial Render on Minimal Home Dashboard
+      renderAll();
+    });
+  </script>
+</body>
+</html>
